@@ -1,0 +1,35 @@
+version: '3.8'
+
+name: test_pr  # Указываем имя сборки
+
+services:
+  db:
+    image: postgres:13
+    container_name: my_project_postgres_db  # Имя контейнера PostgreSQL
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+      TZ: Europe/Moscow  # Устанавливаем временную зону для контейнера
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: [ "postgres", "-c", "timezone=Europe/Moscow" ]  # Устанавливаем временную зону для базы данных
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com  # Логин для входа в pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: password        # Пароль для входа в pgAdmin
+    ports:
+      - "8085:80"  # Прокидывание порта pgAdmin
+    depends_on:
+      - db  # pgAdmin зависит от базы данных
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin  # Для хранения данных pgAdmin
+
+
+volumes:
+  postgres_data:
+  pgadmin_data:
